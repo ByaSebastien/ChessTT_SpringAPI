@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bienvenu sur ChessTT</title>
+</head>
+<body>
+<h1 th:text="'Bienvenu sur Chess Tournament Tracker ' + ${username}" />
+<hr>
+<p>Voici vos identifiants :</p>
+<p th:text="'Login : ' + ${username} "/>
+<p th:text="'Mot de passe : ' + ${password} "/>
+</body>
+</html>
