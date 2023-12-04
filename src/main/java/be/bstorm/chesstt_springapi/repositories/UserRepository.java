@@ -32,10 +32,10 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
             "where u.email ilike :email")
     boolean existsByEmail(String email);
 
-    //TODO check elo null
+    //Trouver les joueurs qui peuvent s'inscrire a un tournois fraichement créé via query jpql
     @Query("SELECT u.email FROM User u " +
             "WHERE NOT (:isWomanOnly = true AND u.gender != 'FEMALE') " +
-            "AND (u.elo BETWEEN :minElo AND :maxElo) " +
+            "AND (:minElo IS NULL OR :maxElo IS NULL OR u.elo BETWEEN :minElo AND :maxElo) " +
             "AND (" +
             "   ('JUNIOR' IN :categories AND " +
             "       (EXTRACT(YEAR FROM CAST(:endOfRegistration AS date)) - EXTRACT(YEAR FROM u.birthdate) - " +

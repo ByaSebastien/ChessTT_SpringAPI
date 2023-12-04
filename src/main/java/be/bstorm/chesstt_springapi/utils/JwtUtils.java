@@ -29,7 +29,7 @@ public class JwtUtils {
                 .claim("id", user.getId())
                 .claim("username", user.getUsername())
                 .claim("email", user.getEmail())
-                .claim("role", user.getRole())
+                .claim("role", user.getRole().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + config.expireAt * 1000L))
                 .compact();

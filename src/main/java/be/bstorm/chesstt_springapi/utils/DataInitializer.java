@@ -7,6 +7,7 @@ import be.bstorm.chesstt_springapi.models.enums.*;
 import be.bstorm.chesstt_springapi.repositories.MatchRepository;
 import be.bstorm.chesstt_springapi.repositories.TournamentRepository;
 import be.bstorm.chesstt_springapi.repositories.UserRepository;
+import be.bstorm.chesstt_springapi.services.impl.TournamentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ public class DataInitializer implements CommandLineRunner {
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
     private final BCryptUtils bCryptUtils;
+    private final TournamentServiceImpl tournamentService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -36,9 +38,9 @@ public class DataInitializer implements CommandLineRunner {
                 "Checkmate",
                 "checkmate@test.be",
                 password,
-                LocalDate.of(1900, 3, 27),
+                LocalDate.of(2006, 1, 1),
                 3000,
-                UserGender.MALE,
+                UserGender.FEMALE,
                 UserRole.ADMIN
         );
         UUID sebId = UUID.randomUUID();
@@ -61,17 +63,17 @@ public class DataInitializer implements CommandLineRunner {
                 16,
                 0,
                 3000,
-                Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR, TournamentCategory.VETERAN),
-                TournamentStatus.IN_PROGRESS,
-                false,
+                Set.of(TournamentCategory.JUNIOR,TournamentCategory.SENIOR,TournamentCategory.VETERAN),
+                TournamentStatus.CLOSED,
+                true,
                 0,
                 LocalDateTime.of(2024, 1, 1, 13, 30)
         );
+        testTournament.addPlayer(checkmate);
+        testTournament.addPlayer(seb);
         Match testMatch = new Match();
         testMatch.setRound(1);
         testMatch.setResult(MatchResult.NOT_PLAYED);
-        testTournament.addPlayer(checkmate);
-        testTournament.addPlayer(seb);
         testMatch.setTournament(testTournament);
         testMatch.setWhitePlayer(checkmate);
         testMatch.setBlackPlayer(seb);
@@ -89,18 +91,5 @@ public class DataInitializer implements CommandLineRunner {
         matches.forEach(System.out::println);
         matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId, 1);
         matches.forEach(System.out::println);
-
-//        Specification<User> specification = new CanRegisterSpecification(testTournament);
-//        userRepository.findAll(specification);
-
-//        userRepository.findAll(
-//                Specification.allOf(
-//                        UserSpecifications.getByGender(testTournament.isWomenOnly() ? UserGender.FEMALE: UserGender.OTHER)))
-
-//        userRepository.findUsersWhoCanRegister(testTournament.getMinElo(),
-//                testTournament.getMaxElo(),
-//                testTournament.isWomenOnly(),
-//                testTournament.getCategories().stream().map(Enum::toString).toList(),
-//                testTournament.getEndOfRegistrationDate()).forEach(System.out::println);
     }
 }

@@ -34,7 +34,6 @@ public class Match {
     @Getter
     @Setter
     @ManyToOne(
-            cascade = {CascadeType.REMOVE, CascadeType.DETACH},
             fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TOURNAMENT", nullable = false)
     private Tournament tournament;
@@ -42,7 +41,6 @@ public class Match {
     @Getter
     @Setter
     @ManyToOne(
-            cascade = CascadeType.REMOVE,
             fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_WHITE_PLAYER", nullable = false)
     private User whitePlayer;
@@ -50,7 +48,6 @@ public class Match {
     @Getter
     @Setter
     @ManyToOne(
-            cascade = CascadeType.REMOVE,
             fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_BLACK_PLAYER", nullable = false)
     private User blackPlayer;
