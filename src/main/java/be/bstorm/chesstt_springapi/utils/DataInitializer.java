@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,7 +36,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Checkmate",
                 "checkmate@test.be",
                 password,
-                LocalDate.of(1991, 3, 27),
+                LocalDate.of(1900, 3, 27),
                 3000,
                 UserGender.MALE,
                 UserRole.ADMIN
@@ -46,7 +45,7 @@ public class DataInitializer implements CommandLineRunner {
         User seb = new User(
                 sebId,
                 "Seb",
-                "seb@test.be",
+                "byasebastien@hotmail.com",
                 password,
                 LocalDate.of(1991, 3, 27),
                 1200,
@@ -62,7 +61,7 @@ public class DataInitializer implements CommandLineRunner {
                 16,
                 0,
                 3000,
-                List.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR, TournamentCategory.VETERAN),
+                Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR, TournamentCategory.VETERAN),
                 TournamentStatus.IN_PROGRESS,
                 false,
                 0,
@@ -90,5 +89,18 @@ public class DataInitializer implements CommandLineRunner {
         matches.forEach(System.out::println);
         matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId, 1);
         matches.forEach(System.out::println);
+
+//        Specification<User> specification = new CanRegisterSpecification(testTournament);
+//        userRepository.findAll(specification);
+
+//        userRepository.findAll(
+//                Specification.allOf(
+//                        UserSpecifications.getByGender(testTournament.isWomenOnly() ? UserGender.FEMALE: UserGender.OTHER)))
+
+//        userRepository.findUsersWhoCanRegister(testTournament.getMinElo(),
+//                testTournament.getMaxElo(),
+//                testTournament.isWomenOnly(),
+//                testTournament.getCategories().stream().map(Enum::toString).toList(),
+//                testTournament.getEndOfRegistrationDate()).forEach(System.out::println);
     }
 }

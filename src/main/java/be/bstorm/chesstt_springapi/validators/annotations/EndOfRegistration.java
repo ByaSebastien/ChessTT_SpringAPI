@@ -1,6 +1,6 @@
 package be.bstorm.chesstt_springapi.validators.annotations;
 
-import be.bstorm.chesstt_springapi.validators.BeforeTodayValidator;
+import be.bstorm.chesstt_springapi.validators.EndOfRegistrationValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,11 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = BeforeTodayValidator.class)
-public @interface BeforeToday {
-    String message() default "Date must be before today";
+@Target(ElementType.TYPE)
+@Constraint(validatedBy = EndOfRegistrationValidator.class)
+public @interface EndOfRegistration {
+    String message() default "End of registration date is not valid";
 
     Class<?>[] groups() default {};
 

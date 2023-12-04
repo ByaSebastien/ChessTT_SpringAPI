@@ -17,7 +17,7 @@ public class BeforeTodayValidator implements ConstraintValidator<BeforeToday, Ch
     @Override
     public boolean isValid(ChronoLocalDate value, ConstraintValidatorContext context) {
         if (value == null) {
-            return true; // Permet les valeurs nulles
+            return true;
         }
         return value.isBefore(LocalDate.now());
     }

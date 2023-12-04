@@ -1,4 +1,4 @@
-package be.bstorm.chesstt_springapi.models.forms.users;
+package be.bstorm.chesstt_springapi.models.forms.user;
 
 import be.bstorm.chesstt_springapi.models.entities.User;
 import be.bstorm.chesstt_springapi.models.enums.UserGender;

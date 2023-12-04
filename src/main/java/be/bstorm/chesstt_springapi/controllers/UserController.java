@@ -1,7 +1,7 @@
 package be.bstorm.chesstt_springapi.controllers;
 
 import be.bstorm.chesstt_springapi.models.entities.User;
-import be.bstorm.chesstt_springapi.models.forms.users.RegisterForm;
+import be.bstorm.chesstt_springapi.models.forms.user.RegisterForm;
 import be.bstorm.chesstt_springapi.services.UserService;
 import be.bstorm.chesstt_springapi.utils.JwtUtils;
 import jakarta.validation.Valid;
@@ -25,12 +25,10 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            @RequestBody @Valid RegisterForm form,
-            UriComponentsBuilder uriBuilder
+            @RequestBody @Valid RegisterForm form
             ){
         System.out.println(form);
         User createdUser = userService.create(form.toEntity());
-        URI location = uriBuilder.path("user/{id}").buildAndExpand(createdUser.getId()).toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.status(201).build();
     }
 }

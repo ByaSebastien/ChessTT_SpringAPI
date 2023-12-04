@@ -1,7 +1,7 @@
 package be.bstorm.chesstt_springapi.services.impl;
 
-import be.bstorm.chesstt_springapi.exceptions.users.UserAlreadyExistException;
-import be.bstorm.chesstt_springapi.exceptions.users.UserNotFoundException;
+import be.bstorm.chesstt_springapi.exceptions.user.UserAlreadyExistException;
+import be.bstorm.chesstt_springapi.exceptions.user.UserNotFoundException;
 import be.bstorm.chesstt_springapi.models.entities.User;
 import be.bstorm.chesstt_springapi.repositories.UserRepository;
 import be.bstorm.chesstt_springapi.services.UserService;
@@ -11,7 +11,6 @@ import be.bstorm.chesstt_springapi.utils.PasswordGeneratorUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;

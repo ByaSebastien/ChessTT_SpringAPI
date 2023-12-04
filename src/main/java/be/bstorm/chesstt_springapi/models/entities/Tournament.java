@@ -13,7 +13,6 @@ import org.hibernate.validator.constraints.Range;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,33 +40,33 @@ public class Tournament {
 
     @Getter
     @Setter
-    @Column(name = "MIN_PLAYER", nullable = false)
+    @Column(name = "MIN_PLAYERS", nullable = false)
     @Range(min = 2)
-    private int minPlayer;
+    private int minPlayers;
 
     @Getter
     @Setter
-    @Column(name = "MAX_PLAYER", nullable = false)
+    @Column(name = "MAX_PLAYERS", nullable = false)
     @Range(min = 2)
-    private int maxPlayer;
+    private int maxPlayers;
 
     @Getter
     @Setter
-    @Column(name = "MIN_ELO", nullable = false)
+    @Column(name = "MIN_ELO", nullable = true)
     @Range(min = 0, max = 3000)
-    private int minELO;
+    private Integer minElo;
 
     @Getter
     @Setter
-    @Column(name = "MAX_ELO", nullable = false)
+    @Column(name = "MAX_ELO", nullable = true)
     @Range(min = 0, max = 3000)
-    private int maxElo;
+    private Integer maxElo;
 
     @Getter
     @Setter
     @Column(name = "CATEGORIES", nullable = false)
     @Enumerated(EnumType.STRING)
-    private List<TournamentCategory> categories;
+    private Set<TournamentCategory> categories;
 
     @Getter
     @Setter
@@ -109,10 +108,32 @@ public class Tournament {
             name = "REGISTRATION",
             joinColumns = @JoinColumn(name = "ID_TOURNAMENT"),
             inverseJoinColumns = @JoinColumn(name = "ID_USER"))
-    private Set<User> players;
+    private final Set<User> players;
 
     public Tournament() {
         players = new HashSet<>();
+    }
+
+    public Tournament(
+            String name,
+            String location,
+            int minPlayer,
+            int maxPlayer,
+            Integer minElo,
+            Integer maxElo,
+            Set<TournamentCategory> categories,
+            boolean isWomenOnly,
+            LocalDateTime endOfRegistrationDate) {
+        this();
+        this.name = name;
+        this.location = location;
+        this.minPlayers = minPlayer;
+        this.maxPlayers = maxPlayer;
+        this.minElo = minElo;
+        this.maxElo = maxElo;
+        this.categories = categories;
+        this.isWomenOnly = isWomenOnly;
+        this.endOfRegistrationDate = endOfRegistrationDate;
     }
 
     public Tournament(
@@ -121,26 +142,26 @@ public class Tournament {
             String location,
             int minPlayer,
             int maxPlayer,
-            int minELO,
+            int minElo,
             int maxElo,
-            List<TournamentCategory> categories,
+            Set<TournamentCategory> categories,
             TournamentStatus status,
             boolean isWomenOnly,
             int currentRound,
             LocalDateTime endOfRegistrationDate) {
-        this();
+        this(
+                name,
+                location,
+                minPlayer,
+                maxPlayer,
+                minElo,
+                maxElo,
+                categories,
+                isWomenOnly,
+                endOfRegistrationDate);
         this.id = id;
-        this.name = name;
-        this.location = location;
-        this.minPlayer = minPlayer;
-        this.maxPlayer = maxPlayer;
-        this.minELO = minELO;
-        this.maxElo = maxElo;
-        this.categories = categories;
         this.status = status;
-        this.isWomenOnly = isWomenOnly;
         this.currentRound = currentRound;
-        this.endOfRegistrationDate = endOfRegistrationDate;
     }
 
     public Set<User> getPlayers() {

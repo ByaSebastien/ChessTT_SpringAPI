@@ -1,4 +1,4 @@
-package be.bstorm.chesstt_springapi.exceptions.users;
+package be.bstorm.chesstt_springapi.exceptions.user;
 
 public class UserNotFoundException extends UserException {
 
