@@ -8,8 +8,10 @@ import be.bstorm.chesstt_springapi.repositories.MatchRepository;
 import be.bstorm.chesstt_springapi.repositories.TournamentRepository;
 import be.bstorm.chesstt_springapi.repositories.UserRepository;
 import be.bstorm.chesstt_springapi.services.impl.TournamentServiceImpl;
+import be.bstorm.chesstt_springapi.services.specifications.TournamentSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -54,42 +56,62 @@ public class DataInitializer implements CommandLineRunner {
                 UserGender.MALE,
                 UserRole.PLAYER
         );
-        UUID tournamentId = UUID.randomUUID();
+        UUID testTournamentId = UUID.randomUUID();
         Tournament testTournament = new Tournament(
-                tournamentId,
+                testTournamentId,
                 "Tournoi des null",
                 "Liège",
                 10,
                 16,
                 0,
                 3000,
-                Set.of(TournamentCategory.JUNIOR,TournamentCategory.SENIOR,TournamentCategory.VETERAN),
+                Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR,TournamentCategory.VETERAN),
                 TournamentStatus.CLOSED,
                 true,
                 0,
                 LocalDateTime.of(2024, 1, 1, 13, 30)
         );
-        testTournament.addPlayer(checkmate);
-        testTournament.addPlayer(seb);
-        Match testMatch = new Match();
-        testMatch.setRound(1);
-        testMatch.setResult(MatchResult.NOT_PLAYED);
-        testMatch.setTournament(testTournament);
-        testMatch.setWhitePlayer(checkmate);
-        testMatch.setBlackPlayer(seb);
+        UUID testTournament2Id = UUID.randomUUID();
+        Tournament testTournament2 = new Tournament(
+                testTournament2Id,
+                "Tournoi des null2",
+                "Liège",
+                10,
+                16,
+                0,
+                3000,
+                Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR,TournamentCategory.VETERAN),
+                TournamentStatus.CLOSED,
+                true,
+                0,
+                LocalDateTime.of(2024, 1, 1, 13, 30)
+        );
+//        testTournament.addPlayer(checkmate);
+//        testTournament.addPlayer(seb);
+//        Match testMatch = new Match();
+//        testMatch.setRound(1);
+//        testMatch.setResult(MatchResult.NOT_PLAYED);
+//        testMatch.setTournament(testTournament);
+//        testMatch.setWhitePlayer(checkmate);
+//        testMatch.setBlackPlayer(seb);
 
         userRepository.save(checkmate);
         userRepository.save(seb);
         tournamentRepository.save(testTournament);
-        matchRepository.save(testMatch);
+        tournamentRepository.save(testTournament2);
+//        matchRepository.save(testMatch);
 
-        Set<Tournament> tournaments = tournamentRepository.getTournamentsByPlayerId(checkmateId);
-        tournaments.forEach(System.out::println);
-        Set<Match> matches = matchRepository.getMatchesByPlayerId(checkmateId);
-        matches.forEach(System.out::println);
-        matches = matchRepository.getMatchesByTournamentId(tournamentId);
-        matches.forEach(System.out::println);
-        matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId, 1);
-        matches.forEach(System.out::println);
+//        Set<Tournament> tournaments = tournamentRepository.getTournamentsByPlayerId(checkmateId);
+//        tournaments.forEach(System.out::println);
+//        Set<Match> matches = matchRepository.getMatchesByPlayerId(checkmateId);
+//        matches.forEach(System.out::println);
+//        matches = matchRepository.getMatchesByTournamentId(tournamentId);
+//        matches.forEach(System.out::println);
+//        matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId, 1);
+//        matches.forEach(System.out::println);
+
+
+        Specification<Tournament> spec = TournamentSpecifications.getByCategory(Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR));
+        tournamentRepository.findAll(spec).forEach(System.out::println);
     }
 }

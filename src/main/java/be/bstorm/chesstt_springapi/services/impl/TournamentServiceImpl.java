@@ -3,6 +3,7 @@ package be.bstorm.chesstt_springapi.services.impl;
 import be.bstorm.chesstt_springapi.exceptions.tournament.TournamentInProgressException;
 import be.bstorm.chesstt_springapi.exceptions.tournament.TournamentNotFoundException;
 import be.bstorm.chesstt_springapi.exceptions.tournament.TournamentValidationException;
+import be.bstorm.chesstt_springapi.models.business.TournamentResult;
 import be.bstorm.chesstt_springapi.models.entities.Match;
 import be.bstorm.chesstt_springapi.models.entities.Tournament;
 import be.bstorm.chesstt_springapi.models.entities.User;
@@ -90,6 +91,11 @@ public class TournamentServiceImpl implements TournamentService {
                 context,
                 playersEmails.toArray(new String[0])
         );
+    }
+
+    @Override
+    public TournamentResult findTournamentsWithCriteria(String name, Set<TournamentCategory> categories, TournamentStatus status, boolean isWomanOnly, int page) {
+        return null;
     }
 
 
