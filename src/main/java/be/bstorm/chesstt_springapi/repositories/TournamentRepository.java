@@ -22,7 +22,7 @@ public interface TournamentRepository extends JpaRepository<Tournament, UUID>, J
 
     @Query("select t " +
             "from Tournament t " +
-            "join t.players " +
+            "left join t.players " +
             "where t.id = :tournamentId")
     Optional<Tournament> findTournamentWithPlayers(UUID tournamentId);
 }

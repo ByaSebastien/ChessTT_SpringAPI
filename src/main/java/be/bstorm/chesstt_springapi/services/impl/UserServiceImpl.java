@@ -1,6 +1,7 @@
 package be.bstorm.chesstt_springapi.services.impl;
 
 import be.bstorm.chesstt_springapi.exceptions.user.UserAlreadyExistException;
+import be.bstorm.chesstt_springapi.exceptions.user.UserException;
 import be.bstorm.chesstt_springapi.exceptions.user.UserNotFoundException;
 import be.bstorm.chesstt_springapi.models.entities.User;
 import be.bstorm.chesstt_springapi.repositories.UserRepository;

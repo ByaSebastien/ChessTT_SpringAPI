@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,4 +24,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             "join m.blackPlayer b " +
             "where w.id = :playerId or b.id = :playerId")
     Set<Match> getMatchesByPlayerId(UUID playerId);
+
+    @Query("select m from Match m join m.tournament where m.id = :id")
+    Optional<Match> findMatchWithTournament(Long id);
 }

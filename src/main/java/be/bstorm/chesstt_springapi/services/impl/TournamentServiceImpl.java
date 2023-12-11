@@ -17,6 +17,7 @@ import be.bstorm.chesstt_springapi.services.TournamentService;
 import be.bstorm.chesstt_springapi.services.specifications.TournamentSpecifications;
 import be.bstorm.chesstt_springapi.services.specifications.UserSpecifications;
 import be.bstorm.chesstt_springapi.utils.MailerUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -157,6 +155,75 @@ public class TournamentServiceImpl implements TournamentService {
         return result;
     }
 
+    @Override
+    public void register(User user, UUID tournamentId) {
+
+        Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
+        checkCanRegister(user,t);
+        t.addPlayer(user);
+        tournamentRepository.save(t);
+    }
+
+    @Override
+    public void unregister(User user, UUID tournamentId) {
+        Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
+        if(!t.getStatus().equals(TournamentStatus.WAITING_FOR_PLAYERS)){
+            throw new TournamentException("Cannot unregister when a tournament has already started");
+        }
+        if(!t.getPlayers().contains(user)){
+            throw new TournamentException("This player is not in the tournament");
+        }
+        t.removePlayer(user);
+        tournamentRepository.save(t);
+    }
+
+    @Transactional
+    @Override
+    public void start(UUID tournamentId) {
+        Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
+        checkCanStart(t);
+        generateMatches(t);
+        t.setStatus(TournamentStatus.IN_PROGRESS);
+        t.setCurrentRound(1);
+        tournamentRepository.save(t);
+    }
+
+    @Override
+    public void nextRound(UUID tournamentId) {
+        Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
+        Set<Match> matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId,t.getCurrentRound());
+        checkCanValidateRound(t,matches);
+        if(t.getCurrentRound() == (t.getPlayers().size() % 2 == 0 ? (t.getPlayers().size() - 1) * 2  : t.getPlayers().size() * 2)) {
+            t.setStatus(TournamentStatus.CLOSED);
+        }else{
+            t.setCurrentRound(t.getCurrentRound() + 1);
+        }
+        tournamentRepository.save(t);
+    }
+
+    public void generateMatches(Tournament t){
+        List<User> players = new ArrayList<>(t.getPlayers());
+        Collections.shuffle(players);
+        if(players.size() % 2 != 0){
+            players.add(null);
+        }
+        for (int round = 1; round < players.size() * 2 - 1; round++){
+            for (int i = 0; i < players.size() / 2; i++){
+                if(players.get(i) != null && players.get(players.size() -i - 1) != null ){
+                    Match match = new Match();
+                    match.setTournament(t);
+                    match.setWhitePlayer(round % 2 == 1 ? players.get(i) : players.get(players.size() - i - 1));
+                    match.setBlackPlayer(round % 2 == 1 ? players.get(players.size() - i - 1) : players.get(i));
+                    match.setRound(round);
+                    match.setResult(MatchResult.NOT_PLAYED);
+                    matchRepository.save(match);
+                }
+            }
+            players.add(1,players.getLast());
+            players.removeLast();
+        }
+    }
+
     private boolean canValidateRound(Tournament t,Set<Match> matches) {
         try{
             checkCanValidateRound(t, matches);
@@ -194,9 +261,10 @@ public class TournamentServiceImpl implements TournamentService {
         if(t.getPlayers().size() < t.getMinPlayers()){
             throw new TournamentException("Not enough players");
         }
-        if(t.getEndOfRegistrationDate().isAfter(LocalDateTime.now())){
-            throw new TournamentException("Cannot start a tournament before the end of registration date");
-        }
+        //TODO décommenter
+//        if(t.getEndOfRegistrationDate().isAfter(LocalDateTime.now())){
+//            throw new TournamentException("Cannot start a tournament before the end of registration date");
+//        }
     }
 
 

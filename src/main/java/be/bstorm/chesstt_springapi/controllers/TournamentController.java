@@ -1,6 +1,8 @@
 package be.bstorm.chesstt_springapi.controllers;
 
+import be.bstorm.chesstt_springapi.models.business.TournamentDetailsResult;
 import be.bstorm.chesstt_springapi.models.dtos.tournament.TournamentDTO;
+import be.bstorm.chesstt_springapi.models.dtos.tournament.TournamentDetailsDTO;
 import be.bstorm.chesstt_springapi.models.dtos.tournament.TournamentIndexDTO;
 import be.bstorm.chesstt_springapi.models.entities.Tournament;
 import be.bstorm.chesstt_springapi.models.entities.User;
@@ -10,6 +12,7 @@ import be.bstorm.chesstt_springapi.services.TournamentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +28,7 @@ public class TournamentController {
 
     private final TournamentService tournamentService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(
             @RequestBody @Valid TournamentForm form,
@@ -37,6 +41,7 @@ public class TournamentController {
         return ResponseEntity.created(location).body(createdTournament);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable UUID id
@@ -68,5 +73,35 @@ public class TournamentController {
 
         TournamentIndexDTO result = new TournamentIndexDTO(total,tournaments);
         return ResponseEntity.status(200).header("Total",total.toString()).body(result);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TournamentDetailsDTO> getOne(
+            Authentication authentication,
+            @PathVariable UUID id
+    ){
+
+        TournamentDetailsResult result = tournamentService.findOne(
+                id,
+                authentication == null ? null : (User) authentication.getPrincipal());
+        return ResponseEntity.ok(TournamentDetailsDTO.fromBusiness(result));
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping("/{id}/start")
+    public ResponseEntity<Void> start(
+            @PathVariable UUID id
+    ){
+        tournamentService.start(id);
+        return ResponseEntity.status(201).build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping("/{id}/nextRound")
+    public ResponseEntity<Void> nextRound(
+            @PathVariable UUID id
+    ){
+        tournamentService.nextRound(id);
+        return ResponseEntity.status(201).build();
     }
 }

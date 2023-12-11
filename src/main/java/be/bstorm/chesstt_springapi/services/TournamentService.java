@@ -31,4 +31,9 @@ public interface TournamentService {
     );
 
     TournamentDetailsResult findOne(UUID tournamentId, User user);
+
+    void register(User user,UUID tournamentId);
+    void unregister(User user,UUID tournamentId);
+    void start(UUID tournamentId);
+    void nextRound(UUID tournamentId);
 }

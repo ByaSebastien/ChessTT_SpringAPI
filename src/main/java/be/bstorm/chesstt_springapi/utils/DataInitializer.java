@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -56,6 +58,17 @@ public class DataInitializer implements CommandLineRunner {
                 UserGender.MALE,
                 UserRole.PLAYER
         );
+        UUID rogerId = UUID.randomUUID();
+        User roger = new User(
+                rogerId,
+                "Roger",
+                "roger@test.be",
+                password,
+                LocalDate.of(1991, 3, 27),
+                1200,
+                UserGender.MALE,
+                UserRole.PLAYER
+        );
         UUID testTournamentId = UUID.randomUUID();
         Tournament testTournament = new Tournament(
                 testTournamentId,
@@ -68,7 +81,7 @@ public class DataInitializer implements CommandLineRunner {
                 Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR,TournamentCategory.VETERAN),
                 TournamentStatus.CLOSED,
                 false,
-                0,
+                1,
                 LocalDateTime.of(2024, 1, 1, 13, 30)
         );
         UUID testTournament2Id = UUID.randomUUID();
@@ -76,12 +89,12 @@ public class DataInitializer implements CommandLineRunner {
                 testTournament2Id,
                 "Tournoi des null2",
                 "Liège",
-                10,
+                2,
                 16,
                 0,
                 3000,
-                Set.of(TournamentCategory.JUNIOR, TournamentCategory.VETERAN),
-                TournamentStatus.CLOSED,
+                Set.of(TournamentCategory.JUNIOR,TournamentCategory.SENIOR, TournamentCategory.VETERAN),
+                TournamentStatus.WAITING_FOR_PLAYERS,
                 true,
                 0,
                 LocalDateTime.of(2024, 1, 1, 13, 30)
@@ -97,9 +110,15 @@ public class DataInitializer implements CommandLineRunner {
 
         userRepository.save(checkmate);
         userRepository.save(seb);
+        userRepository.save(roger);
         tournamentRepository.save(testTournament);
         tournamentRepository.save(testTournament2);
         matchRepository.save(testMatch);
+
+        testTournament2.addPlayer(checkmate);
+        testTournament2.addPlayer(seb);
+        testTournament2.addPlayer(roger);
+        tournamentRepository.save(testTournament2);
 
         Set<Tournament> tournaments = tournamentRepository.getTournamentsByPlayerId(checkmateId);
         tournaments.forEach(System.out::println);

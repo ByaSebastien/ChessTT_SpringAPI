@@ -32,6 +32,11 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
             "where u.email ilike :email")
     boolean existsByEmail(String email);
 
+    @Query("select u " +
+            "from User u " +
+            "where u.email ilike :login or u.username like :login")
+    Optional<User> findUserByEmailOrUsername(String login);
+
     //Trouver les joueurs qui peuvent s'inscrire a un tournois fraichement créé via query jpql
     @Query("SELECT u.email FROM User u " +
             "WHERE NOT (:isWomanOnly = true AND u.gender != 'FEMALE') " +
