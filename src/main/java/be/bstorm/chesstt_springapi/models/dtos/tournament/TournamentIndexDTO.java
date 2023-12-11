@@ -4,7 +4,7 @@ import java.util.List;
 
 public record TournamentIndexDTO(
 
-        int total,
+        long total,
         List<TournamentDTO> results
 ) {
 }

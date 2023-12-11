@@ -64,9 +64,7 @@ public class Tournament {
 
     @Getter
     @Setter
-    @ElementCollection(targetClass = TournamentCategory.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "TOURNAMENT_CATEGORIES", joinColumns = @JoinColumn(name = "TOURNAMENT_ID"))
-    @Column(name = "CATEGORY", nullable = false)
+    @Column(name = "CATEGORIES", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<TournamentCategory> categories;
 

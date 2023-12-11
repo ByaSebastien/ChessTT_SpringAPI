@@ -12,8 +12,4 @@ public class TournamentResult {
     public TournamentResult(Tournament tournament) {
         this.tournament = tournament;
     }
-
-    public static TournamentResult fromEntity(Tournament tournament){
-        return new TournamentResult(tournament);
-    }
 }

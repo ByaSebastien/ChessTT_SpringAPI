@@ -1,5 +1,6 @@
 package be.bstorm.chesstt_springapi.models.dtos.tournament;
 
+import be.bstorm.chesstt_springapi.models.business.TournamentResult;
 import be.bstorm.chesstt_springapi.models.enums.TournamentCategory;
 import be.bstorm.chesstt_springapi.models.enums.TournamentStatus;
 
@@ -21,7 +22,26 @@ public record TournamentDTO(
         TournamentStatus status,
         LocalDateTime endOfRegistrationDate,
         int currentRound,
-        boolean isRegistered,
-        boolean canRegister
+        Boolean isRegistered,
+        Boolean canRegister
 ) {
+
+    public static TournamentDTO fromBusiness(TournamentResult t){
+        TournamentDTO dto = new TournamentDTO(
+                t.getTournament().getId(),
+                t.getTournament().getName(),
+                t.getTournament().getLocation(),
+                t.getTournament().getPlayers().size(),
+                t.getTournament().getMinPlayers(),
+                t.getTournament().getMaxPlayers(),
+                t.getTournament().getMinElo(),
+                t.getTournament().getMaxElo(),
+                t.getTournament().getCategories(),
+                t.getTournament().getStatus(),
+                t.getTournament().getEndOfRegistrationDate(),
+                t.getTournament().getCurrentRound(),
+                t.isRegistered(),
+                t.isCanRegister());
+        return dto;
+    }
 }

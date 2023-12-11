@@ -67,7 +67,7 @@ public class DataInitializer implements CommandLineRunner {
                 3000,
                 Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR,TournamentCategory.VETERAN),
                 TournamentStatus.CLOSED,
-                true,
+                false,
                 0,
                 LocalDateTime.of(2024, 1, 1, 13, 30)
         );
@@ -80,38 +80,39 @@ public class DataInitializer implements CommandLineRunner {
                 16,
                 0,
                 3000,
-                Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR,TournamentCategory.VETERAN),
+                Set.of(TournamentCategory.JUNIOR, TournamentCategory.VETERAN),
                 TournamentStatus.CLOSED,
                 true,
                 0,
                 LocalDateTime.of(2024, 1, 1, 13, 30)
         );
-//        testTournament.addPlayer(checkmate);
-//        testTournament.addPlayer(seb);
-//        Match testMatch = new Match();
-//        testMatch.setRound(1);
-//        testMatch.setResult(MatchResult.NOT_PLAYED);
-//        testMatch.setTournament(testTournament);
-//        testMatch.setWhitePlayer(checkmate);
-//        testMatch.setBlackPlayer(seb);
+        testTournament.addPlayer(checkmate);
+        testTournament.addPlayer(seb);
+        Match testMatch = new Match();
+        testMatch.setRound(1);
+        testMatch.setResult(MatchResult.NOT_PLAYED);
+        testMatch.setTournament(testTournament);
+        testMatch.setWhitePlayer(checkmate);
+        testMatch.setBlackPlayer(seb);
 
         userRepository.save(checkmate);
         userRepository.save(seb);
         tournamentRepository.save(testTournament);
         tournamentRepository.save(testTournament2);
-//        matchRepository.save(testMatch);
+        matchRepository.save(testMatch);
 
-//        Set<Tournament> tournaments = tournamentRepository.getTournamentsByPlayerId(checkmateId);
-//        tournaments.forEach(System.out::println);
-//        Set<Match> matches = matchRepository.getMatchesByPlayerId(checkmateId);
-//        matches.forEach(System.out::println);
-//        matches = matchRepository.getMatchesByTournamentId(tournamentId);
-//        matches.forEach(System.out::println);
-//        matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId, 1);
-//        matches.forEach(System.out::println);
+        Set<Tournament> tournaments = tournamentRepository.getTournamentsByPlayerId(checkmateId);
+        tournaments.forEach(System.out::println);
+        Set<Match> matches = matchRepository.getMatchesByPlayerId(checkmateId);
+        matches.forEach(System.out::println);
+        matches = matchRepository.getMatchesByTournamentId(testTournamentId);
+        matches.forEach(System.out::println);
+        matches = matchRepository.getMatchesByTournamentIdAndRound(testTournamentId, 1);
+        matches.forEach(System.out::println);
 
 
-        Specification<Tournament> spec = TournamentSpecifications.getByCategory(Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR));
+        Specification<Tournament> spec = TournamentSpecifications.getByIsWomanOnly();
         tournamentRepository.findAll(spec).forEach(System.out::println);
+
     }
 }

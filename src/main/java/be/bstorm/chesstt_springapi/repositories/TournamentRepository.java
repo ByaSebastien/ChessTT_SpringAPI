@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,4 +19,10 @@ public interface TournamentRepository extends JpaRepository<Tournament, UUID>, J
             "join t.players u " +
             "where u.id = :playerId")
     Set<Tournament> getTournamentsByPlayerId(UUID playerId);
+
+    @Query("select t " +
+            "from Tournament t " +
+            "join t.players " +
+            "where t.id = :tournamentId")
+    Optional<Tournament> findTournamentWithPlayers(UUID tournamentId);
 }
