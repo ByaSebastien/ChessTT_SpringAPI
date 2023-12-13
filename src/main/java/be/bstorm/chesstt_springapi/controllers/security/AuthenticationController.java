@@ -8,10 +8,12 @@ import be.bstorm.chesstt_springapi.services.security.AuthenticationService;
 import be.bstorm.chesstt_springapi.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
 public class AuthenticationController {

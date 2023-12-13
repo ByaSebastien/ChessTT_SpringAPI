@@ -78,9 +78,9 @@ public class DataInitializer implements CommandLineRunner {
                 16,
                 0,
                 3000,
-                Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR,TournamentCategory.VETERAN),
+                Set.of(TournamentCategory.JUNIOR, TournamentCategory.SENIOR),
                 TournamentStatus.CLOSED,
-                false,
+                true,
                 1,
                 LocalDateTime.of(2024, 1, 1, 13, 30)
         );
@@ -130,8 +130,10 @@ public class DataInitializer implements CommandLineRunner {
         matches.forEach(System.out::println);
 
 
-        Specification<Tournament> spec = TournamentSpecifications.getByIsWomanOnly();
-        tournamentRepository.findAll(spec).forEach(System.out::println);
+//        Specification<Tournament> spec = TournamentSpecifications.getByIsWomanOnly();
+//        tournamentRepository.findAll(spec).forEach(System.out::println);
+
+        tournamentService.findPlayersWhoCanRegister(testTournament);
 
     }
 }

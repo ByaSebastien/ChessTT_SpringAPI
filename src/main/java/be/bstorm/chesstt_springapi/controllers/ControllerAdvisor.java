@@ -3,8 +3,10 @@ package be.bstorm.chesstt_springapi.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@CrossOrigin("*")
 @ControllerAdvice
 @Slf4j
 public class ControllerAdvisor {
