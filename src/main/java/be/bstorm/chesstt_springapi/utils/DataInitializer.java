@@ -8,16 +8,12 @@ import be.bstorm.chesstt_springapi.repositories.MatchRepository;
 import be.bstorm.chesstt_springapi.repositories.TournamentRepository;
 import be.bstorm.chesstt_springapi.repositories.UserRepository;
 import be.bstorm.chesstt_springapi.services.impl.TournamentServiceImpl;
-import be.bstorm.chesstt_springapi.services.specifications.TournamentSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,7 +47,7 @@ public class DataInitializer implements CommandLineRunner {
         User seb = new User(
                 sebId,
                 "Seb",
-                "byasebastien@hotmail.com",
+                "seb@test.com",
                 password,
                 LocalDate.of(1991, 3, 27),
                 1200,

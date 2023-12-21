@@ -54,14 +54,17 @@ public class TournamentServiceImpl implements TournamentService {
                 .map(User::getEmail)
                 .toList();
 
-        Context context = new Context();
-        context.setVariable("tournament", createdTournament);
-        mailerUtils.send(
-                "Nouveau tournois ouvert",
-                "invitation",
-                context,
-                playersEmails.toArray(new String[0])
-        );
+        if (!playersEmails.isEmpty()) {
+
+            Context context = new Context();
+            context.setVariable("tournament", createdTournament);
+            mailerUtils.send(
+                    "Nouveau tournois ouvert",
+                    "invitation",
+                    context,
+                    playersEmails.toArray(new String[0])
+            );
+        }
         return createdTournament;
     }
 
@@ -119,7 +122,7 @@ public class TournamentServiceImpl implements TournamentService {
                     TournamentResult result = new TournamentResult(t);
                     if (user != null) {
                         result.setRegistered(t.getPlayers().contains(user));
-                        result.setCanRegister(canRegister(user,t));
+                        result.setCanRegister(canRegister(user, t));
                     }
                     return result;
                 }).toList();
@@ -142,15 +145,15 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public TournamentDetailsResult findOne(UUID tournamentId,User user) {
+    public TournamentDetailsResult findOne(UUID tournamentId, User user) {
         Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
         TournamentDetailsResult result = new TournamentDetailsResult(t);
-        result.setMatches(matchRepository.getMatchesByTournamentIdAndRound(tournamentId,t.getCurrentRound()));
+        result.setMatches(matchRepository.getMatchesByTournamentIdAndRound(tournamentId, t.getCurrentRound()));
         result.setCanStart(canStart(t));
-        result.setCanValidateRound(canValidateRound(t,result.getMatches()));
-        if(user != null){
+        result.setCanValidateRound(canValidateRound(t, result.getMatches()));
+        if (user != null) {
             result.setRegistered(t.getPlayers().contains(user));
-            result.setCanRegister(canRegister(user,t));
+            result.setCanRegister(canRegister(user, t));
         }
         return result;
     }
@@ -159,7 +162,7 @@ public class TournamentServiceImpl implements TournamentService {
     public void register(User user, UUID tournamentId) {
 
         Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
-        checkCanRegister(user,t);
+        checkCanRegister(user, t);
         t.addPlayer(user);
         tournamentRepository.save(t);
     }
@@ -167,10 +170,10 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public void unregister(User user, UUID tournamentId) {
         Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
-        if(!t.getStatus().equals(TournamentStatus.WAITING_FOR_PLAYERS)){
+        if (!t.getStatus().equals(TournamentStatus.WAITING_FOR_PLAYERS)) {
             throw new TournamentException("Cannot unregister when a tournament has already started");
         }
-        if(!t.getPlayers().contains(user)){
+        if (!t.getPlayers().contains(user)) {
             throw new TournamentException("This player is not in the tournament");
         }
         t.removePlayer(user);
@@ -191,25 +194,25 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public void nextRound(UUID tournamentId) {
         Tournament t = tournamentRepository.findTournamentWithPlayers(tournamentId).orElseThrow(TournamentNotFoundException::new);
-        Set<Match> matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId,t.getCurrentRound());
-        checkCanValidateRound(t,matches);
-        if(t.getCurrentRound() == (t.getPlayers().size() % 2 == 0 ? (t.getPlayers().size() - 1) * 2  : t.getPlayers().size() * 2)) {
+        Set<Match> matches = matchRepository.getMatchesByTournamentIdAndRound(tournamentId, t.getCurrentRound());
+        checkCanValidateRound(t, matches);
+        if (t.getCurrentRound() == (t.getPlayers().size() % 2 == 0 ? (t.getPlayers().size() - 1) * 2 : t.getPlayers().size() * 2)) {
             t.setStatus(TournamentStatus.CLOSED);
-        }else{
+        } else {
             t.setCurrentRound(t.getCurrentRound() + 1);
         }
         tournamentRepository.save(t);
     }
 
-    public void generateMatches(Tournament t){
+    public void generateMatches(Tournament t) {
         List<User> players = new ArrayList<>(t.getPlayers());
         Collections.shuffle(players);
-        if(players.size() % 2 != 0){
+        if (players.size() % 2 != 0) {
             players.add(null);
         }
-        for (int round = 1; round < players.size() * 2 - 1; round++){
-            for (int i = 0; i < players.size() / 2; i++){
-                if(players.get(i) != null && players.get(players.size() -i - 1) != null ){
+        for (int round = 1; round < players.size() * 2 - 1; round++) {
+            for (int i = 0; i < players.size() / 2; i++) {
+                if (players.get(i) != null && players.get(players.size() - i - 1) != null) {
                     Match match = new Match();
                     match.setTournament(t);
                     match.setWhitePlayer(round % 2 == 1 ? players.get(i) : players.get(players.size() - i - 1));
@@ -219,46 +222,46 @@ public class TournamentServiceImpl implements TournamentService {
                     matchRepository.save(match);
                 }
             }
-            players.add(1,players.getLast());
+            players.add(1, players.getLast());
             players.removeLast();
         }
     }
 
-    private boolean canValidateRound(Tournament t,Set<Match> matches) {
-        try{
+    private boolean canValidateRound(Tournament t, Set<Match> matches) {
+        try {
             checkCanValidateRound(t, matches);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
     private void checkCanValidateRound(Tournament t, Set<Match> matches) {
 
-        if(!t.getStatus().equals(TournamentStatus.IN_PROGRESS)){
+        if (!t.getStatus().equals(TournamentStatus.IN_PROGRESS)) {
             throw new TournamentException("Cannot validate a round when the tournament is not in progress");
         }
-        if(matches.stream().anyMatch(match -> match.getResult().equals(MatchResult.NOT_PLAYED))){
+        if (matches.stream().anyMatch(match -> match.getResult().equals(MatchResult.NOT_PLAYED))) {
             throw new TournamentException("Cannot validate a round when the all the matches are not played");
         }
     }
 
     private boolean canStart(Tournament t) {
 
-        try{
+        try {
             checkCanStart(t);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
     private void checkCanStart(Tournament t) {
 
-        if(!t.getStatus().equals(TournamentStatus.WAITING_FOR_PLAYERS)){
+        if (!t.getStatus().equals(TournamentStatus.WAITING_FOR_PLAYERS)) {
             throw new TournamentException("Cannot start a tournament that has already started");
         }
-        if(t.getPlayers().size() < t.getMinPlayers()){
+        if (t.getPlayers().size() < t.getMinPlayers()) {
             throw new TournamentException("Not enough players");
         }
         //TODO décommenter
@@ -312,33 +315,29 @@ public class TournamentServiceImpl implements TournamentService {
         return userRepository.findAll(specs);
     }
 
-    public boolean canRegister(User player, Tournament tournament){
-        try{
+    public boolean canRegister(User player, Tournament tournament) {
+        try {
             checkCanRegister(player, tournament);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
     private void checkCanRegister(User player, Tournament tournament) {
-        if(!tournament.getStatus().equals(TournamentStatus.WAITING_FOR_PLAYERS)){
+        if (!tournament.getStatus().equals(TournamentStatus.WAITING_FOR_PLAYERS)) {
             throw new TournamentRegistrationException("Cannot register when a tournament has already started");
         }
-        if (tournament.getPlayers().contains(player))
-        {
+        if (tournament.getPlayers().contains(player)) {
             throw new TournamentRegistrationException("This player is already registered");
         }
-        if (!tournament.isWomenOnly() && player.getGender().equals(UserGender.FEMALE))
-        {
+        if (!tournament.isWomenOnly() && player.getGender().equals(UserGender.FEMALE)) {
             throw new TournamentRegistrationException("Must be a women to participate");
         }
-        if (tournament.getPlayers().size() >= tournament.getMaxPlayers())
-        {
+        if (tournament.getPlayers().size() >= tournament.getMaxPlayers()) {
             throw new TournamentRegistrationException("This tournament is already full");
         }
-        if (tournament.getEndOfRegistrationDate().isBefore(LocalDateTime.now()))
-        {
+        if (tournament.getEndOfRegistrationDate().isBefore(LocalDateTime.now())) {
             throw new TournamentRegistrationException("The registration date has expired");
         }
         checkCategories(tournament, player);
@@ -346,31 +345,27 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     private void checkElo(Tournament tournament, User player) {
-        if(tournament.getMinElo() != null && player.getElo() < tournament.getMinElo()){
+        if (tournament.getMinElo() != null && player.getElo() < tournament.getMinElo()) {
             throw new TournamentRegistrationException("This player doesn't have the required elo");
         }
-        if(tournament.getMaxElo() != null && player.getElo() > tournament.getMaxElo()){
+        if (tournament.getMaxElo() != null && player.getElo() > tournament.getMaxElo()) {
             throw new TournamentRegistrationException("This player doesn't have the required elo");
         }
     }
 
-    private void checkCategories(Tournament tournament, User player){
+    private void checkCategories(Tournament tournament, User player) {
         boolean flag = false;
         int age = calculateAge(tournament, player);
-        if(tournament.getCategories().contains(TournamentCategory.JUNIOR) && age <= 18)
-        {
+        if (tournament.getCategories().contains(TournamentCategory.JUNIOR) && age <= 18) {
             flag = true;
         }
-        if (tournament.getCategories().contains(TournamentCategory.SENIOR) && age > 18 && age <= 60)
-        {
+        if (tournament.getCategories().contains(TournamentCategory.SENIOR) && age > 18 && age <= 60) {
             flag = true;
         }
-        if (tournament.getCategories().contains(TournamentCategory.VETERAN) && age > 60)
-        {
+        if (tournament.getCategories().contains(TournamentCategory.VETERAN) && age > 60) {
             flag = true;
         }
-        if (!flag)
-        {
+        if (!flag) {
             throw new TournamentRegistrationException("This player doesn't have the required age");
         }
     }
@@ -378,7 +373,7 @@ public class TournamentServiceImpl implements TournamentService {
     private int calculateAge(Tournament tournament, User player) {
         int age = tournament.getEndOfRegistrationDate().getYear() - player.getBirthdate().getYear();
 
-        if(player.getBirthdate().isAfter(tournament.getEndOfRegistrationDate().toLocalDate().minusYears(age))){
+        if (player.getBirthdate().isAfter(tournament.getEndOfRegistrationDate().toLocalDate().minusYears(age))) {
             age--;
         }
         return age;
