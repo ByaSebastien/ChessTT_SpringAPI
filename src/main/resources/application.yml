@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/ChessTT
+    url: jdbc:postgresql://localhost:5432/chesstt
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -14,8 +14,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: #mettre une adresse mail
-    password: #mettre un MDP
+    username: info.gdj.app@gmail.com
+    password: ugzc wkhg lhpf lals
     properties:
       mail:
         smtp:

@@ -25,7 +25,7 @@ public class JwtUtils {
     }
 
     public String generateToken(User user) {
-        return builder
+        return this.builder
                 .claim("id", user.getId())
                 .claim("username", user.getUsername())
                 .claim("email", user.getEmail())

@@ -35,7 +35,10 @@ public class MailerUtils {
             helper.setSubject(title);
             helper.setText(htmlContent, true);
 
-            javaMailSender.send(mimeMessage);
+//            javaMailSender.send(mimeMessage);
+            MailterThread mailterThread = new MailterThread(javaMailSender,mimeMessage);
+            mailterThread.run();
+
         } catch (MessagingException e) {
             log.error(e.getMessage());
             throw new MailSendException("Failed to send email");
